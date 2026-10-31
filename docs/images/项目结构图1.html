@@ -1,0 +1,139 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+ <title id="title">FPGA-Assisted License Plate Recognition with Deep Learning</title>
+
+ <desc id="desc">Current PYNQ-Z2 and laptop architecture. The PS main loop captures USB video, retains the original color frame, sends grayscale input to the PL through axi_dma_0 MM2S, and receives ROI metadata and binary edges through two S2MM channels. The PL uses Sobel, an AXI-Stream broadcaster, grid counting, active-grid selection and four-connected ROI analysis. MM2S and ROI S2MM belong to axi_dma_0; the edge S2MM belongs to axi_dma_edge. A PC PyQt5 client receives JPEG, PNG, ROI coordinates and DMA window time over TCP 8080. TCP 8081 carries commands towards the board and fields, metrics and AI status towards the client. Captured original-color ROI crops are uploaded asynchronously to PC Flask port 5000. HyperLPR3 runs on the PC using ONNX Runtime. JSON recognition results return to the board and then reach PyQt5 through TCP 8081. No Jupyter display or CNN inference is executed on the FPGA.</desc>
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="755" width="1301" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect id="svg_1" stroke-width="1.4" fill="#ffffff" height="1080" width="1920" y="0" x="0"/>
+  <text id="svg_2" fill="#242424" text-anchor="middle" font-weight="bold" font-size="36" font-family="Arial, Helvetica, sans-serif" y="70" x="958.666667">FPGA-assisted CNN for vehicle license plate recognition</text>
+  <rect id="svg_3" stroke-width="1.8" stroke="#626262" fill="#ffffff" rx="25" height="900" width="1250" y="141.333333" x="185"/>
+  <text id="svg_4" fill="#242424" text-anchor="middle" font-weight="600" font-size="31" font-family="Arial, Helvetica, sans-serif" y="183" x="810">PYNQ-Z2</text>
+  <rect id="svg_5" stroke-width="1.3" stroke="#929292" fill="#ffffff" rx="18" height="795" width="380" y="210" x="205"/>
+  <text id="svg_6" fill="#242424" text-anchor="middle" font-weight="600" font-size="29" font-family="Arial, Helvetica, sans-serif" y="235" x="395">PS</text>
+  <rect id="svg_7" stroke-width="1.3" stroke="#929292" fill="#ffffff" rx="18" height="480" width="790" y="336" x="615"/>
+  <text id="svg_8" fill="#242424" text-anchor="middle" font-weight="600" font-size="29" font-family="Arial, Helvetica, sans-serif" y="377" x="999">PL</text>
+  <rect id="svg_9" stroke-width="1.8" stroke="#626262" fill="#ffffff" rx="25" height="820" width="390" y="140" x="1480"/>
+  <text id="svg_10" fill="#242424" text-anchor="middle" font-weight="600" font-size="31" font-family="Arial, Helvetica, sans-serif" y="190" x="1705">PC</text>
+  <rect id="svg_11" stroke-width="2" stroke="#343434" fill="#f7f7f7" rx="10" height="56" width="88" y="412" x="32"/>
+  <circle id="svg_12" stroke-width="2.5" stroke="#343434" fill="#ffffff" r="18" cy="440" cx="76"/>
+  <circle id="svg_13" fill="#677e75" r="7" cy="440" cx="76"/>
+  <path id="svg_14" stroke-linecap="round" stroke-width="3.5" stroke="#343434" fill="none" d="m76,469l0,22m-24,4l48,0"/>
+  <text id="svg_15" fill="#242424" text-anchor="middle" font-weight="400" font-size="21" font-family="Arial, Helvetica, sans-serif" y="528" x="78">USB Camera</text>
+  <path id="svg_16" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m120,440l150,0"/>
+  <polygon id="svg_17" fill="#515151" points="270,440 259.0,444.8 259.0,435.2"/>
+  <text id="svg_18" fill="#242424" text-anchor="middle" font-weight="400" font-size="17" font-family="Arial, Helvetica, sans-serif" y="424" x="191">USB</text>
+  <rect id="svg_19" stroke-width="1.8" stroke="#454545" fill="#e5d6e3" rx="3" height="28" width="28" y="352" x="937"/>
+  <rect id="svg_20" stroke="#454545" fill="#faf7fa" rx="1" height="16" width="16" y="358" x="943"/>
+  <path id="svg_21" stroke-width="1.6" stroke="#454545" fill="none" d="m942,347l0,5"/>
+  <path id="svg_22" stroke-width="1.6" stroke="#454545" fill="none" d="m942,380l0,5"/>
+  <path id="svg_23" stroke-width="1.6" stroke="#454545" fill="none" d="m951,347l0,5"/>
+  <path id="svg_24" stroke-width="1.6" stroke="#454545" fill="none" d="m951,380l0,5"/>
+  <path id="svg_25" stroke-width="1.6" stroke="#454545" fill="none" d="m960,347l0,5"/>
+  <path id="svg_26" stroke-width="1.6" stroke="#454545" fill="none" d="m960,380l0,5"/>
+  <path id="svg_27" stroke-width="1.6" stroke="#454545" fill="none" d="m932,357l5,0"/>
+  <path id="svg_28" stroke-width="1.6" stroke="#454545" fill="none" d="m965,357l5,0"/>
+  <path id="svg_29" stroke-width="1.6" stroke="#454545" fill="none" d="m932,366l5,0"/>
+  <path id="svg_30" stroke-width="1.6" stroke="#454545" fill="none" d="m965,366l5,0"/>
+  <path id="svg_31" stroke-width="1.6" stroke="#454545" fill="none" d="m932,375l5,0"/>
+  <path id="svg_32" stroke-width="1.6" stroke="#454545" fill="none" d="m965,375l5,0"/>
+  <rect id="svg_33" stroke-width="1.8" stroke="#454545" fill="#f4f4f4" rx="3" height="29" width="45" y="164" x="1610"/>
+  <rect id="svg_34" stroke="#454545" fill="#dbeae5" rx="1" height="18" width="35" y="169" x="1615"/>
+  <path id="svg_35" stroke-width="1.8" stroke="#454545" fill="#ececec" d="m1610,193l-7,8l59,0l-7,-8l-45,0z"/>
+  <rect id="svg_36" stroke-width="1.4" stroke="#777777" fill="#f6e6ca" rx="9" height="390" width="280" y="250" x="270"/>
+  <text id="svg_37" fill="#242424" text-anchor="middle" font-weight="bold" font-size="23" font-family="Arial, Helvetica, sans-serif" y="283" x="410">PYNQ Video Server</text>
+  <path id="svg_38" stroke="#b9aa91" fill="none" d="m290,332l240,0"/>
+  <text id="svg_39" fill="#242424" text-anchor="middle" font-weight="bold" font-size="22" font-family="Arial, Helvetica, sans-serif" y="405" x="406">Frame Capture</text>
+  <text style="cursor: move;" id="svg_40" fill="#414141" text-anchor="middle" font-weight="normal" font-size="18" font-family="Arial, Helvetica, sans-serif" y="448" x="411.333333">Grayscale Conversion</text>
+  <path id="svg_41" stroke="#b9aa91" fill="none" d="m290,506l240,0"/>
+  <text id="svg_42" fill="#414141" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="582" x="410">Dual-DMA Runtime</text>
+  <rect id="svg_43" stroke-width="1.4" stroke="#777777" fill="#f6e6ca" rx="9" height="70" width="280" y="705" x="270"/>
+  <text id="svg_44" fill="#242424" text-anchor="middle" font-weight="bold" font-size="22" font-family="Arial, Helvetica, sans-serif" y="748" x="410">Color ROI Cropping</text>
+  <rect id="svg_45" stroke-width="1.4" stroke="#777777" fill="#f6e6ca" rx="9" height="100" width="280" y="855" x="270"/>
+  <text id="svg_46" fill="#242424" text-anchor="middle" font-weight="bold" font-size="22" font-family="Arial, Helvetica, sans-serif" y="896.333333" x="410">Manual / Auto Capture</text>
+  <text id="svg_47" fill="#414141" text-anchor="middle" font-weight="normal" font-size="18" font-family="Arial, Helvetica, sans-serif" y="928" x="410">Async Recognition Client</text>
+  <path id="svg_48" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m410,640l0,65"/>
+  <polygon id="svg_49" fill="#515151" points="410,705 405.2,694.0 414.8,694.0"/>
+  <path id="svg_50" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m410,775l0,80"/>
+  <polygon id="svg_51" fill="#515151" points="410,855 405.2,844.0 414.8,844.0"/>
+  <path id="svg_52" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#5d7c69" fill="none" d="m270,907l-40,0l0,-307l40,0"/>
+  <polygon id="svg_53" fill="#5d7c69" points="270,600 259.0,604.8 259.0,595.2"/>
+  <rect id="svg_54" stroke-width="1.4" stroke="#777777" fill="#dbeae5" rx="9" height="90" width="155" y="392.333333" x="651.333333"/>
+  <text id="svg_55" fill="#242424" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="420.333334" x="726.166667">AXI DMA</text>
+  <text id="svg_56" fill="#414141" text-anchor="middle" font-weight="400" font-size="18" font-family="Arial, Helvetica, sans-serif" y="449" x="727.5">MM2S</text>
+  <text id="svg_57" fill="#414141" text-anchor="middle" font-weight="400" font-size="15" font-family="Arial, Helvetica, sans-serif" y="473" x="727.5">axi_dma_0</text>
+  <rect id="svg_58" stroke-width="1.4" stroke="#777777" fill="#dbeae5" rx="9" height="90" width="155" y="545" x="650"/>
+  <text id="svg_59" fill="#242424" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="573" x="727.5">Edge DMA</text>
+  <text id="svg_60" fill="#414141" text-anchor="middle" font-weight="400" font-size="18" font-family="Arial, Helvetica, sans-serif" y="599" x="727.5">S2MM</text>
+  <text id="svg_61" fill="#414141" text-anchor="middle" font-weight="400" font-size="15" font-family="Arial, Helvetica, sans-serif" y="623" x="727.5">axi_dma_edge</text>
+  <rect id="svg_62" stroke-width="1.4" stroke="#777777" fill="#dbeae5" rx="9" height="90" width="155" y="695" x="650"/>
+  <text id="svg_63" fill="#242424" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="723" x="727.5">AXI DMA</text>
+  <text id="svg_64" fill="#414141" text-anchor="middle" font-weight="400" font-size="18" font-family="Arial, Helvetica, sans-serif" y="749" x="727.5">S2MM</text>
+  <text id="svg_65" fill="#414141" text-anchor="middle" font-weight="400" font-size="15" font-family="Arial, Helvetica, sans-serif" y="773" x="727.5">axi_dma_0</text>
+  <rect id="svg_66" stroke-width="1.4" stroke="#777777" fill="#e5d6e3" rx="9" height="70" width="190" y="405" x="845"/>
+  <text id="svg_67" fill="#242424" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="435" x="940">Sobel Edge</text>
+  <text id="svg_68" fill="#414141" text-anchor="middle" font-weight="bold" font-size="20" font-family="Arial, Helvetica, sans-serif" y="461" x="940">Extraction</text>
+  <rect id="svg_69" stroke-width="1.4" stroke="#777777" fill="#e5d6e3" rx="9" height="50" width="95" y="415" x="1065"/>
+  <text id="svg_70" fill="#242424" text-anchor="middle" font-weight="bold" font-size="17" font-family="Arial, Helvetica, sans-serif" y="437.333333" x="1112.5">AXIS</text>
+  <text id="svg_71" fill="#414141" text-anchor="middle" font-weight="bold" font-size="17" font-family="Arial, Helvetica, sans-serif" y="455" x="1112.5">Broadcast</text>
+  <rect id="svg_72" stroke-width="1.4" stroke="#777777" fill="#e5d6e3" rx="9" height="70" width="195" y="405" x="1190"/>
+  <text stroke="null" id="svg_73" fill="#242424" text-anchor="middle" font-weight="bold" font-size="23" font-family="Arial, Helvetica, sans-serif" y="447" x="1287.5">Grid Edge Count</text>
+  <rect id="svg_74" stroke-width="1.4" stroke="#777777" fill="#e5d6e3" rx="9" height="70" width="195" y="555" x="1190"/>
+  <text id="svg_75" fill="#242424" text-anchor="middle" font-weight="bold" font-size="23" font-family="Arial, Helvetica, sans-serif" y="585" x="1287.5">Active Grid</text>
+  <text id="svg_76" fill="#414141" text-anchor="middle" font-weight="bold" font-size="21" font-family="Arial, Helvetica, sans-serif" y="611" x="1287.5">Selection</text>
+  <rect id="svg_77" stroke-width="1.4" stroke="#777777" fill="#e5d6e3" rx="9" height="70" width="195" y="705" x="1190"/>
+  <text id="svg_78" fill="#242424" text-anchor="middle" font-weight="bold" font-size="23" font-family="Arial, Helvetica, sans-serif" y="735" x="1287.5">4-Connected ROI</text>
+  <text id="svg_79" fill="#414141" text-anchor="middle" font-weight="bold" font-size="23" font-family="Arial, Helvetica, sans-serif" y="761" x="1287.5">Selection</text>
+  <path id="svg_80" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m550,440l100,0"/>
+  <polygon id="svg_81" fill="#515151" points="650,440 639.0,444.8 639.0,435.2"/>
+  <path id="svg_82" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m805,440l40,0"/>
+  <polygon id="svg_83" fill="#515151" points="845,440 834.0,444.8 834.0,435.2"/>
+  <path id="svg_84" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1035,440l30,0"/>
+  <polygon id="svg_85" fill="#515151" points="1065,440 1054.0,444.8 1054.0,435.2"/>
+  <path id="svg_86" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1160,440l30,0"/>
+  <polygon id="svg_87" fill="#515151" points="1190,440 1179.0,444.8 1179.0,435.2"/>
+  <path id="svg_88" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1287.5,475l0,80"/>
+  <polygon id="svg_89" fill="#515151" points="1287.5,555 1282.7,544.0 1292.3,544.0"/>
+  <path id="svg_90" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1287.5,625l0,80"/>
+  <polygon id="svg_91" fill="#515151" points="1287.5,705 1282.7,694.0 1292.3,694.0"/>
+  <path id="svg_92" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1112.5,466.333333l0,125l-307.5,0"/>
+  <polygon id="svg_93" fill="#515151" points="805,590 816.0,585.2 816.0,594.8"/>
+  <path id="svg_94" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m650,590l-100,0"/>
+  <polygon id="svg_95" fill="#515151" points="550,590 561.0,585.2 561.0,594.8"/>
+  <path id="svg_96" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m1190,740l-385,0"/>
+  <polygon id="svg_97" fill="#515151" points="805,740 816.0,735.2 816.0,744.8"/>
+  <path id="svg_98" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m650,740l-100,0"/>
+  <polygon id="svg_99" fill="#515151" points="550,740 561.0,735.2 561.0,744.8"/>
+  <path id="svg_100" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.9" stroke="#515151" fill="none" d="m600,740l0,-120l-50,0"/>
+  <polygon id="svg_101" fill="#515151" points="550,620 561.0,615.2 561.0,624.8"/>
+  <circle id="svg_102" fill="#515151" r="3.5" cy="740" cx="600"/>
+  <rect id="svg_103" stroke-width="1.4" stroke="#777777" fill="#dce9f2" rx="9" height="150" width="310" y="230" x="1520"/>
+  <text id="svg_104" fill="#242424" text-anchor="middle" font-weight="600" font-size="25" font-family="Arial, Helvetica, sans-serif" y="283" x="1675">PyQt5 Dashboard</text>
+  <rect id="svg_105" stroke-width="1.4" stroke="#777777" fill="#f6e6ca" rx="9" height="100" width="310" y="560" x="1520"/>
+  <text id="svg_106" fill="#242424" text-anchor="middle" font-weight="bold" font-size="24" font-family="Arial, Helvetica, sans-serif" y="620" x="1675">Flask Server</text>
+  <rect id="svg_107" stroke-width="1.4" stroke="#777777" fill="#f6e6ca" rx="9" height="140" width="310" y="770" x="1520"/>
+  <text id="svg_108" fill="#242424" text-anchor="middle" font-weight="bold" font-size="24" font-family="Arial, Helvetica, sans-serif" y="811" x="1673.666667">Plate Detection</text>
+  <text id="svg_109" fill="#242424" text-anchor="middle" font-weight="bold" font-size="24" font-family="Arial, Helvetica, sans-serif" y="842.333333" x="1675">&amp; Recognition</text>
+  <text id="svg_110" fill="#414141" text-anchor="middle" font-weight="400" font-size="17" font-family="Arial, Helvetica, sans-serif" y="879" x="1675">HyperLPR3 / ONNX Runtime</text>
+  <path id="svg_111" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#466f8a" fill="none" d="m550,270l970,0"/>
+  <polygon id="svg_112" fill="#466f8a" points="1520,270 1509.0,274.8 1509.0,265.2"/>
+  <text id="svg_113" fill="#466f8a" text-anchor="middle" font-weight="bold" font-size="18" font-family="Arial, Helvetica, sans-serif" y="251" x="1000">TCP</text>
+  <path id="svg_114" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#466f8a" fill="none" d="m550,315l970,0"/>
+  <polygon id="svg_115" fill="#466f8a" points="1520,315 1509.0,319.8 1509.0,310.2"/>
+  <polygon id="svg_116" fill="#466f8a" points="550,315 561.0,310.2 561.0,319.8"/>
+  <text id="svg_117" fill="#466f8a" text-anchor="middle" font-weight="bold" font-size="18" font-family="Arial, Helvetica, sans-serif" y="299" x="1000">TCP</text>
+  <text id="svg_118" fill="#5d7c69" text-anchor="middle" font-weight="bold" font-size="18" font-family="Arial, Helvetica, sans-serif" y="866" x="1000">HTTP</text>
+  <text id="svg_119" fill="#414141" text-anchor="middle" font-weight="400" font-size="21" font-family="Arial, Helvetica, sans-serif" y="333" x="1675">Display &amp; Control</text>
+  <path id="svg_120" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#515151" fill="none" d="m1675,660l0,110"/>
+  <polygon id="svg_121" fill="#515151" points="1675,770 1670.2,759.0 1679.8,759.0"/>
+  <polygon id="svg_122" fill="#515151" points="1675,660 1679.8,671.0 1670.2,671.0"/>
+  <path id="svg_123" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#5d7c69" fill="none" d="m550,885l900,0l0,-285l70,0"/>
+  <polygon id="svg_124" fill="#5d7c69" points="1520,600 1509.0,604.8 1509.0,595.2"/>
+  <path id="svg_125" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#5d7c69" fill="none" d="m1520,640l-55,0l0,285l-915,0"/>
+  <polygon id="svg_126" fill="#5d7c69" points="550,925 561.0,920.2 561.0,929.8"/>
+  <text id="svg_127" fill="#414141" text-anchor="middle" font-size="17" font-family="Arial, Helvetica, sans-serif" y="312" x="410">ARM OpenCV</text>
+ </g>
+</svg>
