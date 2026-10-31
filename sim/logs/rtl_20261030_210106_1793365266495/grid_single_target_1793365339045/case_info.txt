@@ -1,0 +1,4 @@
+Top: tb_grid_counter
+Vector: single_target
+Options: -onfinish stop -testplusarg EDGE=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/single_target_640x480_expected.bin -testplusarg COUNTS=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/single_target_640x480_grid_counts.hex
+Started: 2026-10-30 21:02:19

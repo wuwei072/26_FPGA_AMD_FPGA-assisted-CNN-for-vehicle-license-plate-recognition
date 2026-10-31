@@ -1,0 +1,4 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/roi_engine.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module roi_engine
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_roi_engine.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tb_roi_engine

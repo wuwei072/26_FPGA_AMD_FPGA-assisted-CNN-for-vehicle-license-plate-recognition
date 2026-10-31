@@ -1,0 +1,5 @@
+Time resolution is 1 ps
+Frame 1: grid counts: 48, mismatches: 0
+Frame 2: grid counts: 48, mismatches: 0
+grid counts: 48, mismatches: 0, PASS
+$finish called at time : 6145315 ns : File "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_grid_counter.sv" Line 244

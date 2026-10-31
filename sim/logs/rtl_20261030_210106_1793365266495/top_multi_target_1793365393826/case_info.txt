@@ -1,0 +1,4 @@
+Top: tb_sobel_grid_edge_top
+Vector: multi_target
+Options: -onfinish stop -testplusarg IN=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/multi_target_640x480_input.bin -testplusarg EDGE=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/multi_target_640x480_expected.bin -testplusarg EXPECTED=80,80,240,160,6,8750
+Started: 2026-10-30 21:03:13

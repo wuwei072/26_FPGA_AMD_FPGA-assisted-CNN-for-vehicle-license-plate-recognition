@@ -1,0 +1,6 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/axis_broadcast_1to2.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module axis_broadcast_1to2
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/sobel_grid_edge_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module sobel_grid_edge_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_sobel_grid_edge_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tb_sobel_grid_edge_top
