@@ -57,7 +57,7 @@ fpga_lpr/
 ## 验证与文档
 
 - [源码目录说明](src/README.md)：各源码目录的用途。
-- [算法与接口规格](src/fpga_edge_vision/docs/fpga_interface_spec.md)：Sobel、网格、ROI 和数据格式。
+- [算法与接口规则](docs/fpga_interface_spec.md)：Sobel、网格、ROI 和数据格式。
 - [RTL 仿真](sim/README.md)：模块与顶层仿真步骤，原始结果保存在 `sim/logs/`。
 - [实现报告](build/reports/current/)：现有时序、资源及地址映射报告。
 - [技能包](skill/README.md)：主机联调、DMA 排错、性能分析和黄金结果核验。
