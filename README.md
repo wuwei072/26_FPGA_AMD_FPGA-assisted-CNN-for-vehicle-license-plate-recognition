@@ -2,10 +2,11 @@
 
 
 本项目基于 PYNQ-Z2 实现 FPGA 与 CNN 协同的车牌识别系统。FPGA 完成边缘提取与候选区域筛选，板端负责视频采集和抓拍调度，电脑端完成画面展示与车牌识别，支持手动抓拍、自动识别确认后保存及同帧软硬件对比。
+
 ![系统架构](src/fpga_edge_vision/docs/figures/method_draw_http_roi_edited.png)
 
 - **目标平台：** PYNQ-Z2，Xilinx Zynq-7000 XC7Z020
-- **开发工具：** AMD Vivado 2025.1、Python
+- **开发工具：** AMD Vivado 2025.1、Python 3.12
 
 ## 项目概览
 
@@ -20,25 +21,15 @@
 
 ### 数据通路与接口
 
-```text
-USB 摄像头 -> ARM 灰度帧 -> 主 DMA MM2S -> Sobel -> 分流
-                                                   |-> 网格 / ROI -> 主 DMA S2MM -> 12 B 元数据
-                                                   `-> 边缘 DMA S2MM -> 307200 B 二值边缘图
-ARM 用 ROI 坐标裁剪同帧彩色图 -> HTTP 识别服务
-ARM -> TCP 原图 / 边缘图 / 状态 -> 电脑 PyQt5
-```
 
-| 项目 | 当前规格 |
-|---|---|
-| 板卡 / 器件 | PYNQ-Z2，`xc7z020clg400-1` |
-| PL 时钟 | 50 MHz |
-| 输入 | 640×480、uint8 灰度、行优先，共 307200 B |
-| Sobel | `min(255, abs(Gx) + abs(Gy))`，最外圈清零，阈值 `>=80` 输出 255 |
-| 网格 | 8 列 × 6 行，每格 80×80，`edge_count > 768` 为活跃格 |
-| ROI 选择 | 四连通，保留活跃格数最多的区域；并列保留先按行扫描到的区域 |
-| ROI 回传 | 六个 uint16：`x, y, width, height, best_grids, reduction_x100` |
-| 视频 / 控制 | 板端 TCP 8080 / 8081 |
-| 识别接口 | 电脑 HTTP 5000，`POST /api/recognize`；健康检查 `GET /health` |
+| 接口 | 方向 | 传输内容 |
+|---|---|---|
+| 主 DMA MM2S | PS → PL | 640×480 灰度帧 |
+| 主 DMA S2MM | PL → PS | ROI 六字段，共 12 字节 |
+| 边缘 DMA S2MM | PL → PS | 完整二值边缘图 |
+| TCP 8080 | 板端 → 电脑客户端 | 彩色图、边缘图及帧信息 |
+| TCP 8081 | 板端 ↔ 电脑客户端 | 控制指令与运行状态 |
+| HTTP 5000 | 板端 ↔ 电脑识别服务 | 候选 JPEG 与识别结果 |
 
 算法边界和黄金参考语义见 [接口规格](src/fpga_edge_vision/docs/fpga_interface_spec.md)。候选区域面积缩减率描述 ROI 大小；当前仍回传完整边缘图，不能将面积缩减直接写成实际 DMA 带宽或 CNN 推理耗时的等比例下降。
 
@@ -78,14 +69,15 @@ fpga_lpr/
 
 | 推荐提交分类 | 本工程实际位置 |
 |---|---|
-| 设计源码 | `src/fpga_edge_vision/hardware/rtl/`、`software/` 和 `src/plate_lpr_server/` |
-| 仿真脚本 / 数据 | `src/fpga_edge_vision/hardware/sim/` 与 `software/python_ref/` |
-| 构建入口 / 报告 | `build/rebuild.tcl`、`build/reports/` |
+| 设计源码 | `hardware/rtl/`、`software/`、`plate_lpr_server/` |
+| 仿真脚本 | `hardware/sim/`、`software/python_ref/` |
+| 构建入口 | `build/rebuild.tcl` |
 | 上板运行包 | `board/deploy/` |
-| 测试输入 / 黄金答案 | `src/fpga_edge_vision/data/input/`、`data/golden_vectors/` |
-| 已有 CPU 参考结果 | `src/fpga_edge_vision/results/python_ref/` |
+| 测试输入 | `data/input/`、`data/golden_vectors/` |
+| 黄金答案 | `data/golden_vectors/` |
+| CPU参考结果 | `results/python_ref/` |
 | 技能包 | `skill/` |
-| 设计报告 / 大模型记录 | `report/`，当前尚未放入成稿与原始记录 |
+| 设计报告 | `report/` |
 
 `venv/`、`__pycache__/` 和服务运行生成的 `.tmp/`、`server.pid` 不作为源码提交。环境在实际运行位置重新建立。生成工程、缓存和重复副本可在确认报告与证据已归档后精简。
 
@@ -95,21 +87,21 @@ fpga_lpr/
 
 - PYNQ-Z2 开发板、带 PYNQ 镜像的 Micro SD 卡、适配电源。
 - USB 摄像头接开发板 USB Host；网线连接开发板与电脑。
-- 电脑运行 PyQt5 和识别服务，双方 IP 可达。
+- 电脑运行 PyQt5 和识别服务，IP 互相可 ping 通。
 
 ### 软件
 
-| 执行位置 | 依赖 |
+| 运行环境 | 依赖 |
 |---|---|
-| PYNQ 板端 | PYNQ Python 环境、`pynq`、NumPy、OpenCV；摄像头可由 OpenCV 打开 |
-| Windows 电脑界面 | Python 3.12，`PyQt5==5.15.11`，见 [界面依赖](src/fpga_edge_vision/software/pc/requirements.txt) |
-| Windows 电脑识别 | Python 3.12；见 [识别依赖](src/plate_lpr_server/requirements.txt)，已有模型 ZIP 和三个 ONNX |
-| 硬件重建电脑 | Vivado 2025.1、PYNQ-Z2 board files；其他工具版本需自行复核 |
-| 离线参考测试 | Python 标准库；OpenCV 同帧对照另外依赖 NumPy / OpenCV |
+| PYNQ 板端 | Python、PYNQ、NumPy、OpenCV |
+| Windows 电脑界面 | Python 3.12、`PyQt5==5.15.11`，见[界面依赖](src/fpga_edge_vision/software/pc/requirements.txt) |
+| Windows 电脑识别 | Python 3.12、模型 ZIP 与 ONNX 文件，见[识别依赖](src/plate_lpr_server/requirements.txt) |
+| 硬件重建电脑 | Vivado 2025.1、PYNQ-Z2 板卡配置文件 |
+| 离线参考测试 | Python 标准库；OpenCV 同帧对照另需 NumPy、OpenCV |
 
 现有服务环境的 Python 版本记录为 3.12.14。当前识别依赖表固定了主要依赖；在全新电脑上的安装与模型推理仍需验收。PYNQ 镜像、板端 Python / NumPy / OpenCV 的实际版本应随最终板测记录补充。
 
-下文 Windows 示例假定本仓库在 `D:\fpga_lpr`。放到其他位置时，只替换仓库根路径。`py -3.12` 需 Windows 已安装 Python 3.12；也可用该解释器的完整路径替代。
+下文 Windows 示例假定以下命令均在仓库根目录执行。放到其他位置时，只替换仓库根路径。`py -3.12` 需 Windows 已安装 Python 3.12；也可用该解释器的完整路径替代。
 
 ## 4. 使用已有 Overlay 部署运行
 
