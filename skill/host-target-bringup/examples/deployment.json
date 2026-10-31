@@ -1,0 +1,17 @@
+{
+  "roles": {
+    "host": {
+      "os": "windows",
+      "files": ["viewer.py"],
+      "startup_hint": ".\\venv\\Scripts\\python.exe viewer.py --host TARGET_IP"
+    },
+    "target": {
+      "os": "linux",
+      "files": ["device_server.py"],
+      "artifact_pairs": [
+        {"stem": "accelerator", "suffixes": [".bit", ".hwh"]}
+      ],
+      "startup_hint": "python3 device_server.py --host-ip HOST_IP"
+    }
+  }
+}
