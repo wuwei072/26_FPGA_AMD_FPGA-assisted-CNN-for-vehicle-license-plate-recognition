@@ -25,7 +25,7 @@ FPGA 使用 3×3 Sobel、8×6 网格统计和四连通最大区域筛选，双 D
 
 | 位置 | 功能 |
 |---|---|
-| [hardware/rtl](src/fpga_edge_vision/hardware/rtl/) | Sobel、网格统计、ROI 筛选和 AXI-Stream 数据通路 |
+| [rtl](src/fpga_edge_vision/rtl/) | Sobel、网格统计、ROI 筛选和 AXI-Stream 数据通路 |
 | [pynq_video_server.py](board/deploy/pynq_video_server.py) | 板端采集、抓拍、视频传输与识别调用 |
 | [edge_dma_runtime.py](board/deploy/edge_dma_runtime.py) | 双 DMA 调度、缓冲管理与结果回传 |
 | [pc_dashboard.py](src/fpga_edge_vision/software/pc/pc_dashboard.py) | 电脑端双画面、控制和状态显示 |
