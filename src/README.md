@@ -5,9 +5,8 @@
 ```text
 src/
 ├── fpga_edge_vision/       FPGA 视觉处理工程
-│   ├── software/          板端程序、PyQt5 界面和 Python 参考模型
 │   ├── rtl/               底层硬件代码
-│   ├── docs/              接口说明和相关文档
+│   ├── software/          板端程序、PyQt5 界面和 Python 参考模型
 └── plate_lpr_server/      电脑识别服务、模型、依赖清单及启停脚本
 ```
 
