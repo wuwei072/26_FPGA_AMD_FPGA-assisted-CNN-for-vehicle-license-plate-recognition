@@ -1,19 +1,20 @@
 # FPGA 协同 CNN 辅助车牌识别
 
-基于 PYNQ-Z2 的软硬件协同视觉系统。USB 摄像头由板端 ARM 采集，PL 完成 Sobel 边缘提取、网格统计及四连通候选区域筛选；板端裁剪彩色 ROI，经 HTTP 发送给电脑上的 HyperLPR3 / ONNX Runtime 服务识别，PyQt5 客户端展示原图、真实 FPGA 边缘图、ROI 和状态。
 
-**当前运行入口：板端使用 `board/deploy/pynq_video_server.py`，电脑界面使用 `src/fpga_edge_vision/software/pc/pc_dashboard.py`，识别服务使用 `src/plate_lpr_server/start_server.cmd`。CNN 在电脑运行。**
-
+本项目基于 PYNQ-Z2 实现 FPGA 与 CNN 协同的车牌识别系统。FPGA 完成边缘提取与候选区域筛选，板端负责视频采集和抓拍调度，电脑端完成画面展示与车牌识别，支持手动抓拍、自动识别确认后保存及同帧软硬件对比。
 ![系统架构](src/fpga_edge_vision/docs/figures/method_draw_http_roi_edited.png)
 
-## 1. 功能与软硬件划分
+- **目标平台：** PYNQ-Z2，Xilinx Zynq-7000 XC7Z020
+- **开发工具：** AMD Vivado 2025.1、Python
 
-|        部分       |                                 职责                                 |
-|-------------------|---------------------------------------------------------------------|
-| PYNQ-Z2 PS / ARM | USB 摄像头采集、灰度转换、DMA 调度、彩色 ROI 裁剪、抓拍、同帧 OpenCV 对照、HTTP 调用 |
-| PYNQ-Z2 PL / FPGA | 3×3 Sobel、阈值二值化、8×6 网格边缘统计、四连通最大区域筛选 |
-| 电脑 PyQt5 客户端 | 原图 / 边缘双画面、ROI 框、局部预览、手动 / 自动抓拍控制和指标显示 |
-| 电脑识别服务 | 加载预训练模型，处理彩色 ROI，返回车牌、置信度和自动保存许可 |
+## 项目概览
+
+| 部分 | 主要职责 | 目录 |
+|---|---|---|
+| PL 硬件 | Sobel 边缘提取、网格统计、四连通 ROI 筛选、双 AXI DMA | [hardware/](hardware/) |
+| PS 软件 | 视频采集、DMA 调用、稳定判定、抓拍与异步识别调度 | [deploy/](deploy/) |
+| PyQt5 客户端 | 双画面显示、ROI 预览、远程控制与指标展示 | [software/pc/](software/pc/) |
+| PC 识别服务 | 预训练模型推理、车牌识别与自动保存许可 | 独立部署 |
 
 部署版支持手动抓拍与稳定目标自动抓拍。自动模式需目标持续稳定，并以识别服务返回的许可决定是否保存；实际使用受背景、距离、角度和光照影响。候选区域来自边缘密度，不能单凭 ROI 判定车牌类别。
 
