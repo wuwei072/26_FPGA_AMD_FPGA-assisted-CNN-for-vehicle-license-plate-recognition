@@ -1,9 +1,0 @@
-P2
-# 5x5 deterministic Sobel test image: black-to-white vertical step
-5 5
-255
-0 0 255 255 255
-0 0 255 255 255
-0 0 255 255 255
-0 0 255 255 255
-0 0 255 255 255
