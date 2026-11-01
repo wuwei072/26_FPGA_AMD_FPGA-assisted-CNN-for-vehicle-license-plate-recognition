@@ -1,4 +1,4 @@
-"""PYNQ摄像头/双DMA服务8080传视频，8081传命令和状态"""
+"""PYNQ摄像头/双DMA服务。8080传视频，8081传命令和状态"""
 import argparse
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
@@ -18,6 +18,7 @@ from video_protocol import VIDEO_PORT, CONTROL_PORT, pack_frame
 
 ROOT = Path(__file__).resolve().parent
 WIDTH, HEIGHT = 640, 480
+AUTO_CAPTURE_POLICY = "plate-confirmed-v2"
 
 
 def valid_roi(fields):
@@ -25,17 +26,15 @@ def valid_roi(fields):
     return w > 0 and h > 0 and x >= 0 and y >= 0 and x + w <= WIDTH and y + h <= HEIGHT
 
 
-def save_roi(frame, fields, folder, automatic=False):
+def save_roi(frame, fields, folder):
     x, y, w, h = map(int, fields[:4])
-    prefix = "auto_roi" if automatic else "roi"
-    path = folder / (prefix + datetime.now().strftime("_%Y%m%d_%H%M%S_%f.jpg"))
+    path = folder / ("roi" + datetime.now().strftime("_%Y%m%d_%H%M%S_%f.jpg"))
     if not cv2.imwrite(str(path), frame[y:y + h, x:x + w]):
         raise OSError("ROI图片保存失败")
     return path
 
 
 def encode_images(frame, edge):
-    # 保留真实二值图；框和画中画由电脑绘制
     if cv2.countNonZero(cv2.inRange(edge, 1, 254)):
         raise ValueError("FPGA边缘图包含0/255以外的值")
     png_options = [cv2.IMWRITE_PNG_COMPRESSION, 1]
@@ -53,34 +52,63 @@ class AsyncPlateSender:
         self.url = url
         self.pool = ThreadPoolExecutor(max_workers=1)
         self.lock = threading.Lock()
+        self.results = queue.Queue()
         self.busy = self.closed = False
         self.message, self.kind = "[AI 识别] 等待抓拍", "idle"
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
     def send_async(self, path):
+        return self._submit(path)
+
+    def send_candidate(self, crop, generation):
+        return self._submit(crop, generation)
+
+    def _submit(self, source, generation=None):
         with self.lock:
             if self.busy or self.closed:
                 return False
+            if generation is not None:
+                source = source.copy()
+            self.pool.submit(self._send, source, generation)
             self.busy = True
             self.message, self.kind = "[AI 识别] 请求发送中...", "pending"
-        self.pool.submit(self._send, path)
         return True
 
-    def _send(self, path):
-        message, kind = "[AI 识别] 识别失败/超时", "error"
+    def _send(self, source, generation):
+        message, kind = "[AI 识别] 识别服务异常/超时", "error"
+        saved_jpeg = None
         try:
-            request = urllib.request.Request(self.url, data=path.read_bytes(),
+            if generation is None:
+                jpeg = source.read_bytes()
+            else:
+                ok, encoded = cv2.imencode(".jpg", source)
+                if not ok:
+                    raise RuntimeError("ROI编码失败")
+                jpeg = encoded.tobytes()
+            request = urllib.request.Request(self.url, data=jpeg,
                                              headers={"Content-Type": "image/jpeg"}, method="POST")
             with self.opener.open(request, timeout=3.0) as response:
                 result = json.loads(response.read().decode("utf-8"))
-            if result.get("status") == "success" and result.get("plate"):
-                message = f'[AI 识别] {result["plate"]} (耗时 {float(result["time_ms"]):.0f}ms)'
+            plate = result.get("plate")
+            if (result.get("status") == "success" and isinstance(plate, str) and plate.strip()
+                    and (generation is None or result.get("auto_save_allowed") is True)):
+                elapsed = result.get("time_ms")
+                timing = f" (耗时 {float(elapsed):.0f}ms)" if elapsed is not None else ""
+                message = f"[AI 识别] {plate.strip()}{timing}"
                 kind = "saved"
+                saved_jpeg = jpeg
+            else:
+                message = "[AI 识别] 未识别到车牌"
         except Exception:
             pass  # 网络失败只更新识别状态，视频继续运行
         finally:
             with self.lock:
-                self.message, self.kind, self.busy = message, kind, False
+                self.busy = False
+                if not self.closed:
+                    self.message, self.kind = message, kind
+                    if generation is not None:
+                        self.results.put(dict(generation=generation, jpeg=saved_jpeg,
+                                              message=message, kind=kind))
 
     def status(self):
         with self.lock:
@@ -95,15 +123,24 @@ class AsyncPlateSender:
 class AutoCapture:
     def __init__(self):
         self.enabled = False
+        self.pending = False
+        self.generation = 0
         self.cooldown_until = 0.0
         self.reset()
         self.message, self.kind = "[自动抓拍未开启]", "idle"
 
     def reset(self):
         self.since = self.reference = self.last_frame_at = None
+        self.elapsed = 0.0
+        self.bad_frames = 0
 
     def toggle(self, enabled):
+        enabled = bool(enabled)
+        if self.enabled == enabled:
+            return
         self.enabled = enabled
+        self.generation += 1
+        self.pending = False
         self.cooldown_until = 0.0
         self.reset()
         self.message = "等待目标" if enabled else "[自动抓拍未开启]"
@@ -113,22 +150,39 @@ class AutoCapture:
         now = time.monotonic()
         if not self.enabled:
             return False
+        if self.pending:
+            self.message, self.kind = "[处理中]", "pending"
+            return False
         if now < self.cooldown_until:
             self.reset()
             self.message, self.kind = f"[冷却中] 剩余 {self.cooldown_until - now:.1f} 秒", "pending"
             return False
-        if not valid_roi(fields):
+        previous = self.last_frame_at
+        if previous is not None and now - previous > 1.0:
             self.reset()
-            self.message, self.kind = "等待目标", "idle"
-            return False
-        roi = tuple(map(int, fields[:4]))
-        if (self.reference is None or now - self.last_frame_at > 0.5
-                or self.iou(roi, self.reference) < 0.6):
-            self.reference, self.since = roi, now
+            previous = None
         self.last_frame_at = now
-        elapsed = now - self.since
-        self.message, self.kind = f"[稳定检测中] {elapsed:.1f} / 1.0 秒", "pending"
-        return elapsed >= 1.0
+        valid = valid_roi(fields)
+        roi = tuple(map(int, fields[:4])) if valid else None
+        matches = valid and (self.reference is None or self.same_region(roi, self.reference))
+        if not matches:
+            self.bad_frames += 1
+            if self.bad_frames >= 2:
+                self.reset()
+                self.last_frame_at = now
+                if valid:
+                    self.reference, self.since = roi, now
+            self.message = (f"[稳定检测中] {min(self.elapsed, 1.0):.1f} / 1.0 秒"
+                            if self.reference is not None else "等待目标")
+            self.kind = "pending" if self.reference is not None else "idle"
+            return False
+        if self.reference is None:
+            self.reference, self.since = roi, now
+        elif self.bad_frames == 0 and previous is not None:
+            self.elapsed += now - previous
+        self.bad_frames = 0
+        self.message, self.kind = f"[稳定检测中] {min(self.elapsed, 1.0):.1f} / 1.0 秒", "pending"
+        return self.elapsed + 1e-9 >= 1.0
 
     @staticmethod
     def iou(first, second):
@@ -137,14 +191,56 @@ class AutoCapture:
         overlap = max(0, min(x + w, a + c) - max(x, a)) * max(0, min(y + h, b + d) - max(y, b))
         return overlap / (w * h + c * d - overlap)
 
-    def saved(self, path):
+    @classmethod
+    def same_region(cls, first, second):
+        x, y, w, h = first
+        a, b, c, d = second
+        center_close = abs(2 * x + w - 2 * a - c) <= 80 and abs(2 * y + h - 2 * b - d) <= 80
+        size_close = 0.5 <= (w * h) / (c * d) <= 2.0
+        return cls.iou(first, second) >= 0.6 or (center_close and size_close)
+
+    def submitted(self):
         self.reset()
+        self.pending = True
+        self.message, self.kind = "[处理中]", "pending"
+
+    def finish(self, message, kind):
+        self.reset()
+        self.pending = False
         self.cooldown_until = time.monotonic() + 4.0
-        self.message, self.kind = "[已抓拍] " + path.name, "saved"
+        self.message, self.kind = message, kind
+
+    def saved(self, path):
+        self.finish("[已抓拍] " + path.name, "saved")
+
+
+def complete_auto_capture(sender, automatic, folder):
+    try:
+        result = sender.results.get_nowait()
+    except queue.Empty:
+        return False
+    if not automatic.enabled or result["generation"] != automatic.generation:
+        return False
+    if result["kind"] != "saved":
+        automatic.finish("等待目标", "idle")
+        return True
+    path = folder / ("auto_roi_" + datetime.now().strftime("%Y%m%d_%H%M%S_%f.jpg"))
+    temporary = path.with_suffix(".jpg.tmp")
+    try:
+        temporary.write_bytes(result["jpeg"])
+        temporary.replace(path)
+    except OSError:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+        automatic.finish("[保存失败]", "error")
+    else:
+        automatic.saved(path)
+    return True
 
 
 class ControlLink:
-    """接收线程只登记命令；摄像头、DMA和写盘由主循环执行"""
     def __init__(self, connection):
         self.socket = connection
         self.commands = queue.Queue()
@@ -221,7 +317,6 @@ def serve_client(video, control, camera, runtime, ai_url, save_dir):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             frame_id = (frame_id + 1) & 0xFFFFFFFF
             if benchmark_pending:
-                # 同一张gray先跑ARM，再跑FPGA；参考算法只在按钮触发时运行
                 from opencv_benchmark import opencv_roi_pipeline, result_fields
                 automatic.reset()
                 started = time.perf_counter()
@@ -236,8 +331,9 @@ def serve_client(video, control, camera, runtime, ai_url, save_dir):
             if benchmark_pending:
                 benchmark = dict(frame_id=frame_id, arm_ms=arm_ms, fpga_ms=call_ms,
                                  match=arm_fields == fields)
-                automatic.reset()  # 冻结测试帧不累计自动抓拍稳定时间
+                automatic.reset() 
 
+            auto_completed = complete_auto_capture(ai, automatic, save_dir)
             if capture_pending and valid_roi(fields):
                 capture_pending = False
                 try:
@@ -246,20 +342,17 @@ def serve_client(video, control, camera, runtime, ai_url, save_dir):
                     ai.send_async(path)
                 except OSError as exc:
                     capture_msg, capture_kind = str(exc), "error"
-            if not benchmark_pending and automatic.ready(fields):
-                automatic.reset()
-                try:
-                    path = save_roi(frame, fields, save_dir, automatic=True)
-                    automatic.saved(path)
-                    ai.send_async(path)
-                except OSError as exc:
-                    automatic.message, automatic.kind = str(exc), "error"
+            if not benchmark_pending and not auto_completed and automatic.ready(fields):
+                x, y, w, h = fields[:4]
+                if ai.send_candidate(frame[y:y + h, x:x + w], automatic.generation):
+                    automatic.submitted()
 
             color_data, edge_data = encode_images(frame, edge)
             ai_msg, ai_kind = ai.status()
             link.send(dict(type="status", frame_id=frame_id, fields=fields,
                            fpga_call_ms=call_ms, average_ms=sum(durations) / len(durations),
                            capture_msg=capture_msg, capture_kind=capture_kind,
+                           auto_capture_policy=AUTO_CAPTURE_POLICY,
                            auto_enabled=automatic.enabled, auto_msg=automatic.message,
                            auto_kind=automatic.kind, ai_msg=ai_msg, ai_kind=ai_kind,
                            benchmark=benchmark))
@@ -299,6 +392,7 @@ def main():
             if not camera.isOpened():
                 raise RuntimeError("无法打开USB摄像头")
             control_listener.settimeout(5.0)
+            print(f"自动抓拍规则: {AUTO_CAPTURE_POLICY}", flush=True)
             print(f"视频端口 {VIDEO_PORT}，控制端口 {CONTROL_PORT}；等待电脑连接", flush=True)
             while True:
                 video, address = video_listener.accept()
