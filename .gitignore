@@ -1,0 +1,33 @@
+# Local Python environments and caches
+venv/
+.venv/
+venv_old*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.tmp/
+server.pid
+
+# Reproducible work and archives
+/sim/work/
+/build/work/
+.Xil/
+*.jou
+*.str
+*.wdb
+*.dcp
+*.rpx
+*.pb
+*.log.tmp
+Thumbs.db
+.DS_Store
+
+# Runtime captures; selected evidence goes in board/measurements
+/board/deploy/roi_*.jpg
+/board/deploy/auto_roi_*.jpg
+/board/deploy/measurements/
+
+# Keep raw sim/logs and *.rpt; do not ignore *.log globally.
+
+/src/fpga_edge_vision/software/pynq/roi_*.jpg
+/src/fpga_edge_vision/software/pynq/auto_roi_*.jpg
