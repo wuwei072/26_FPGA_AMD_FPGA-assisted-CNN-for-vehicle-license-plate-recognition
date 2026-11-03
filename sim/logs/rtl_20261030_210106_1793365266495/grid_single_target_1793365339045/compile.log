@@ -1,4 +1,0 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/grid_counter.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module grid_counter
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_grid_counter.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module tb_grid_counter

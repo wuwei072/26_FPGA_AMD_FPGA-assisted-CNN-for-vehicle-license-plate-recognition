@@ -1,5 +1,0 @@
-Time resolution is 1 ps
-Frame 1: output pixels: 307200, mismatches: 0, border_nonzero: 0
-Frame 2: output pixels: 307200, mismatches: 0, border_nonzero: 0
-PASS
-$finish called at time : 6606135 ns : File "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_sobel_axis.sv" Line 254

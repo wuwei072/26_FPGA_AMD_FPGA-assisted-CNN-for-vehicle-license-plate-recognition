@@ -1,7 +1,0 @@
-Time resolution is 1 ps
-INFO: loaded D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/multi_target_640x480_input.bin
-INFO: loaded D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/multi_target_640x480_expected.bin
-Frame 1: edge_pixels=307200 edge_mismatches=0 ROI=(80,80,240,160) best=6 reduction=87.50% roi_mismatches=0
-Frame 2: edge_pixels=307200 edge_mismatches=0 ROI=(80,80,240,160) best=6 reduction=87.50% roi_mismatches=0
-PASS
-$finish called at time : 14381310 ns : File "D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_sobel_grid_edge_top.sv" Line 408

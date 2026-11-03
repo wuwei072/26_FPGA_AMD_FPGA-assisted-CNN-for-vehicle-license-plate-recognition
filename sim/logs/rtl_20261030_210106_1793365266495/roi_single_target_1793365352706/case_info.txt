@@ -1,4 +1,0 @@
-Top: tb_roi_engine
-Vector: single_target
-Options: -onfinish stop -testplusarg COUNTS=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/single_target_640x480_grid_counts.hex
-Started: 2026-10-30 21:02:32
