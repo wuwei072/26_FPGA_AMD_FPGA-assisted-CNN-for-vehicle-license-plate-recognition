@@ -19,7 +19,7 @@
 | [data](data/README.md) | 41份测试输入、Golden、HDL向量及软件参考输出 |
 | [docs](docs/) | 接口规格、架构和已有演示图片 |
 | [skill](skill/README.md) | 可复用技能及示例 |
-
+|[report](report/) |设计报告与大模型协作记录|
 **复现入口**
 
 - [电脑环境、模型准备与识别服务](src/plate_lpr_server/README.md)。
