@@ -1,0 +1,4 @@
+Top: tb_sobel_axis
+Vector: single_target
+Options: -onfinish stop -testplusarg IN=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/single_target_640x480_input.bin -testplusarg EXP=D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/vectors/single_target_640x480_expected.bin
+Started: 2026-10-30 21:01:52

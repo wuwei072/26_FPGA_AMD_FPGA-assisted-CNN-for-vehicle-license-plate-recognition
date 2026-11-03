@@ -1,0 +1,12 @@
+Repository: D:/fpga_lpr
+Vivado: 2025.1
+Part: xc7z020clg400-1
+D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/sobel_axis.sv | bytes=11178 | mtime=1792758012
+D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/grid_counter.sv | bytes=9304 | mtime=1792756405
+D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/roi_engine.sv | bytes=16913 | mtime=1792758108
+D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/axis_broadcast_1to2.sv | bytes=1859 | mtime=1792755587
+D:/fpga_lpr/src/fpga_edge_vision/hardware/rtl/sobel_grid_edge_top.sv | bytes=3067 | mtime=1792757145
+D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_sobel_axis.sv | bytes=8587 | mtime=1792753430
+D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_grid_counter.sv | bytes=8306 | mtime=1792757388
+D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_roi_engine.sv | bytes=11535 | mtime=1792831741
+D:/fpga_lpr/src/fpga_edge_vision/hardware/sim/tb_sobel_grid_edge_top.sv | bytes=14430 | mtime=1792753430

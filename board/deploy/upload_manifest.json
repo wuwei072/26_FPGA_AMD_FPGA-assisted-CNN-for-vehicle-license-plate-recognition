@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-11-03T00:28:45.402446+08:00",
+  "board_directory": "/home/xilinx/jupyter_notebooks/fpga_edge_vision",
+  "main_package_complete": true,
+  "missing_main_files": [],
+  "errors": [],
+  "board_validation": "更换Overlay后运行validation/edge_return_test.py；打包不代表硬件验证通过",
+  "archive_directory": null,
+  "files": {
+    "board_check/board_check.ipynb": {
+      "bytes": 14380,
+      "sha256": "c72b3cfc8a8d264806a838ddcb37078ff0b5cec8a7ab14ea4c6c3bcde1768c1c"
+    },
+    "board_check/README.md": {
+      "bytes": 3669,
+      "sha256": "40aaafca98afcb2842854ab0149967c0acdcdb3fa938560d99d60417c2aa7ec2"
+    },
+    "edge_dma_runtime.py": {
+      "bytes": 3677,
+      "sha256": "e3c8760ab8cfafd89e8b5ee87696b22c103327e0b53eff8ccdd2c2ef41eb1ce6"
+    },
+    "opencv_benchmark.py": {
+      "bytes": 2541,
+      "sha256": "0c01438639a88ca9846e51564b932700d2e350074fa5237149d189c816cda9c4"
+    },
+    "pynq_video_server.py": {
+      "bytes": 16815,
+      "sha256": "47cf6a84735bf34da98c8aa1373952736be164c70dca048b3020c61c2f1dc484"
+    },
+    "README.md": {
+      "bytes": 6137,
+      "sha256": "bccec94d1d77497b3ba0f21b63afd600a6d7ee1556014052ce6beaf72f01551c"
+    },
+    "sobel_edge.bit": {
+      "bytes": 4045701,
+      "sha256": "ff7e5124113b1c9daf0e483301f7cf18df2623ef0f9dc880f898f4b738050cb8"
+    },
+    "sobel_edge.hwh": {
+      "bytes": 414458,
+      "sha256": "0ddbde96e2c84623362c7e7098a6f3c390bf2c058c463ac284ad224c0a0fa0e0"
+    },
+    "validation/edge_return_test.py": {
+      "bytes": 2484,
+      "sha256": "c367045d6f359d10512479f13bd4c264988c723336f839e86b8baa9f3f9409c1"
+    },
+    "validation/multi_target_640x480_expected.bin": {
+      "bytes": 307200,
+      "sha256": "222b7fddada9c46981f39841fc0372da1b57f940d907bb8d3d21b4fbd452ae9a"
+    },
+    "validation/multi_target_640x480_input.bin": {
+      "bytes": 307200,
+      "sha256": "66407e0dc2163efb99f66cebde893ae4d83cdf18e90b0220902ba9309adae599"
+    },
+    "validation/noise_target_640x480_expected.bin": {
+      "bytes": 307200,
+      "sha256": "275f6bf6bf7c0da666d58a4ba864b4b8e504c0731939bbb14aadf05e8fa9e92d"
+    },
+    "validation/noise_target_640x480_input.bin": {
+      "bytes": 307200,
+      "sha256": "353b5c7a7214d9375b8ecc1108e1973b3943b0e46a9ebf17041f6b97703494a6"
+    },
+    "validation/single_target_640x480_expected.bin": {
+      "bytes": 307200,
+      "sha256": "8b93a3a15e958d212a260ebb873b7acfcfeabb6a90eaa0251d97847e9eb48a1e"
+    },
+    "validation/single_target_640x480_input.bin": {
+      "bytes": 307200,
+      "sha256": "1088b43fa2c3ecfe048a745d1cfef633048c261810fd2a6f70b8597bbada7d6d"
+    },
+    "video_protocol.py": {
+      "bytes": 1069,
+      "sha256": "c7f21be6b90e027807eb6ca41e7a46ec02faf701797dd606c7a2d04db324480a"
+    }
+  }
+}
